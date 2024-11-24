@@ -1,2 +1,5 @@
 # mov2mov
 diffuserモジュールでmov2movを実装してみました。
+
+各pythonファイルでSD1.5の実写風ファインチューニングモデルのControlNetある場合とない場合、SD2.1のContRolNetある場合とない場合、SD3のContrilNetある場合とない場合を実装しています。
+それらによって得られる動画も併せておいています。
