@@ -84,5 +84,5 @@ def mov2mov(video_path, output_dir, output_video_path):
     # 動画の再構築
     combine_frames_to_video(styled_frames_dir, output_video_path)
 
-mov2mov("SD記事用動画.mp4", "frames","SD2_with_Net.mp4")
+mov2mov("SD記事用動画.mp4", "frames","SD2_No_Net.mp4")
 

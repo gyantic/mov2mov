@@ -16,18 +16,11 @@ mov2mov_sd1.5_with_clNet.pyとmov2mov_controlNet.pyがSD1.5の実写モデル()�
 ## 使用方法
 mov2mov関数を実行することでmov2movがなされるようになっている。
 mov2mov関数の引数は、
-controlNetなしの場合
 入力動画（mov2movしたい動画）、入力動画のフレーム保存場所、出力動画の保存先
-contronNetありの場合
-入力動画（mov2movしたい動画）、入力動画のフレーム保存場所、canntエッジマップをとりたい画像、出力動画の保存先である。
+とする。
 例えば
-ControlNetなしでmov2movを実行するなら、
 ```
 mov2mov("input.mp4, frames, "output.mp4")
-```
-とし、ControlNetを使うなら
-```
-mov2mov("input.mp4, reference.imgframes, "output.mp4")
 ```
 とすればいい。
 
