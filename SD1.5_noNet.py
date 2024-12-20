@@ -1,5 +1,5 @@
 from moviepy.editor import VideoFileClip, ImageSequenceClip
-from diffusers import StableDiffusionImg2ImgPipeline, ControlNetModel
+from diffusers import StableDiffusionImg2ImgPipeline
 import torch
 import cv2
 import os
@@ -15,7 +15,7 @@ def split_video_to_frames(video_path, output_dir):
 
 
 # img2imgで各フレームに対してスタイル適用
-def apply_img2img_with_reference(frame_path, reference_image, pipeline):
+def apply_img2img_with_reference(frame_path, pipeline):
     # オリジナルの解像度を取得
     original_image = Image.open(frame_path).convert("RGB")
     width, height = original_image.size
@@ -23,20 +23,16 @@ def apply_img2img_with_reference(frame_path, reference_image, pipeline):
     # 幅と高さを64の倍数に調整
     w, h = map(lambda x: x - x % 64, (width, height))
     original_image = original_image.resize((w, h))
-    reference_image_resized = reference_image.resize((w, h))
-    
+
     # 画像生成
     with torch.no_grad():
         generated_image = pipeline(
             prompt="(Cinematic Aesthetic:1.4) Realistic photo, a cauboy, dance , moving, dynamic, man wearing a brown hat, Long Sleeve Clothes,4k",
             negative_prompt="cartoon, lowres, blurry, pixelated, sketch, drawing",
             image=original_image,
-            reference_images=reference_image_resized,
             guidance_scale=10,
             strength=0.6,
             num_inference_steps=40,
-            reference_attn=True,
-            reference_adain=True,
         ).images[0]
 
     return generated_image
@@ -52,11 +48,8 @@ def combine_frames_to_video(frames_dir, output_video_path, fps=30):
     clip.write_videofile(output_video_path, codec="libx264")
 
 
-def mov2mov(video_path, reference_image_path, output_dir, output_video_path):
+def mov2mov(video_path, output_dir, output_video_path):
     split_video_to_frames(video_path, output_dir)
-    reference_image = Image.open(reference_image_path).convert("RGB")
-
-    
 
     # メインモデルのパス
     model_path = "E:/stadifmodels/beautifulRealistic_v7.safetensors"
@@ -84,13 +77,13 @@ def mov2mov(video_path, reference_image_path, output_dir, output_video_path):
         frame_path = os.path.join(output_dir, frame_name)
 
         # 画像生成（入力サイズを維持）
-        styled_frame = apply_img2img_with_reference(frame_path, reference_image, pipeline)
+        styled_frame = apply_img2img_with_reference(frame_path, pipeline)
         styled_frame.save(os.path.join(styled_frames_dir, frame_name))
 
     # 動画の再構築
     combine_frames_to_video(styled_frames_dir, output_video_path)
 
-mov2mov("SD記事用動画.mp4","reference_記事.jpg","frames","SD1.5_NoNet.mp4")
+mov2mov("SD記事用動画.mp4","frames","SD1.5_NoNet.mp4")
 
 
 

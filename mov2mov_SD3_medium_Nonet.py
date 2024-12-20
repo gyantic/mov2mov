@@ -14,23 +14,30 @@ def split_video_to_frames(video_path, output_dir):
     for i, frame in enumerate(clip.iter_frames()):
         cv2.imwrite(f"{output_dir}/frame_{i:04d}.png", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 
+# Edge Detection (cannyで)
+#def edge_detection(image_path):
+    #image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    #edges = cv2.Canny(image, 100, 200)
+    #return edges
+
 # img2imgで各フレームに対してスタイル適用
-def apply_img2img_with_reference(frame_path, reference_image, pipeline):
+def apply_img2img_with_reference(frame_path, pipeline):
     # オリジナルの解像度を取得
     original_image = Image.open(frame_path).convert("RGB")
     width, height = original_image.size
 
     # 幅と高さを64の倍数に調整
-    w, h = map(lambda x: x - x % 64, (width, height))
+    w, h = map(lambda x: x - x % 64, (width, height))  #この操作は必要
+
     original_image = original_image.resize((w, h))
-    #edges_image = edges_image.resize((w, h))
-    reference_image_resized = reference_image.resize((w, h))
+
+
 
     # 画像生成
     with torch.no_grad():
         generated_image = pipeline(
-            prompt="(Cinematic Aesthetic:1.4) Realistic photo, a cowboy, dance , moving, dynamic, man wearing a brown hat, Long Sleeve Clothes,4k",
-            negative_prompt="cartoon, lowres, blurry, pixelated, sketch, drawing",
+            prompt="(Cinematic Aesthetic:1.4) Realistic photo, a real cowboy, real man, dance , moving, dynamic, man wearing a brown hat, Long Sleeve Clothes,4k",
+            negative_prompt="cartoon, lowres, blurry, pixelated, sketch, drawing, anime, woody, disney",
             image=original_image,
             guidance_scale=10,
             strength=0.6,
@@ -50,22 +57,20 @@ def combine_frames_to_video(frames_dir, output_video_path, fps=30):
     clip.write_videofile(output_video_path, codec="libx264")
 
 
-def mov2mov(video_path, reference_image_path, output_dir, output_video_path):
+def mov2mov(video_path, output_dir, output_video_path):
     split_video_to_frames(video_path, output_dir)
-    reference_image = Image.open(reference_image_path).convert("RGB")
+    #reference_image = Image.open(reference_image_path).convert("RGB")
 
     quantization_config = BitsAndBytesConfig(load_in_8bit=True)
 
     # メインモデルのパス
     #model_path = "stabilityai/stable-diffusion-3-medium-diffusers"
-    model_path = "stabilityai/stable-diffusion-3.5-medium"
+    model_path = "stabilityai/stable-diffusion-3.5-large"
 
 
     # パイプラインの初期化
     pipeline = StableDiffusion3Img2ImgPipeline.from_pretrained(
         model_path,
-        text_encoder_3=None,
-        tokenizer_3=None,
         torch_dtype=torch.float16,
     ).to("cuda")
 
@@ -87,10 +92,11 @@ def mov2mov(video_path, reference_image_path, output_dir, output_video_path):
         frame_path = os.path.join(output_dir, frame_name)
 
         # 画像生成（入力サイズを維持）
-        styled_frame = apply_img2img_with_reference(frame_path, reference_image, pipeline)
+        styled_frame = apply_img2img_with_reference(frame_path, pipeline)
         styled_frame.save(os.path.join(styled_frames_dir, frame_name))
 
     # 動画の再構築
     combine_frames_to_video(styled_frames_dir, output_video_path)
 
-mov2mov("SD記事用動画.mp4","reference_記事.jpg","frames","SD3.5__noNet.mp4")
+#mov2movの引数は適切に変更してください
+mov2mov("SD記事用動画.mp4","frames","SD3.5__noNet.mp4")
