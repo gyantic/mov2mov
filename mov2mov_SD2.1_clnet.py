@@ -20,7 +20,7 @@ def edge_detection(image_path):
     return edges
 
 # img2imgで各フレームに対してスタイル適用
-def apply_img2img_with_reference(frame_path, edges_image, reference_image, pipeline):
+def apply_img2img_with_reference(frame_path, edges_image, pipeline):
     # オリジナルの解像度を取得
     original_image = Image.open(frame_path).convert("RGB")
     width, height = original_image.size
@@ -29,7 +29,6 @@ def apply_img2img_with_reference(frame_path, edges_image, reference_image, pipel
     w, h = map(lambda x: x - x % 64, (width, height))
     original_image = original_image.resize((w, h))
     edges_image = edges_image.resize((w, h))
-    reference_image_resized = reference_image.resize((w, h))
 
     # 画像生成
     with torch.no_grad():
@@ -38,13 +37,10 @@ def apply_img2img_with_reference(frame_path, edges_image, reference_image, pipel
             negative_prompt="cartoon, lowres, blurry, pixelated, sketch, drawing",
             image=original_image,
             control_image=edges_image,
-             controlnet_conditioning_scale=0.5,
-            reference_images=reference_image_resized,
+            controlnet_conditioning_scale=0.5,
             guidance_scale=10,
             strength=0.6,
             num_inference_steps=40,
-            reference_attn=True,
-            reference_adain=True,
         ).images[0]
 
     return generated_image
@@ -60,7 +56,7 @@ def combine_frames_to_video(frames_dir, output_video_path, fps=30):
     clip.write_videofile(output_video_path, codec="libx264")
 
 
-def mov2mov(video_path, reference_image_path, output_dir, output_video_path):
+def mov2mov(video_path, output_dir, output_video_path):
     split_video_to_frames(video_path, output_dir)
     reference_image = Image.open(reference_image_path).convert("RGB")
 
@@ -74,7 +70,6 @@ def mov2mov(video_path, reference_image_path, output_dir, output_video_path):
     ).to("cuda")
 
     # メインモデルのパス
-    #model_path = "E:/stadifmodels/beautifulRealistic_v7.safetensors"
     model_path = "stabilityai/stable-diffusion-2-1"
 
     # パイプラインの初期化
@@ -105,10 +100,10 @@ def mov2mov(video_path, reference_image_path, output_dir, output_video_path):
         edges_image = Image.fromarray(edges).convert("RGB")
 
         # 画像生成（入力サイズを維持）
-        styled_frame = apply_img2img_with_reference(frame_path, edges_image, reference_image, pipeline)
+        styled_frame = apply_img2img_with_reference(frame_path, edges_image, pipeline)
         styled_frame.save(os.path.join(styled_frames_dir, frame_name))
 
     # 動画の再構築
     combine_frames_to_video(styled_frames_dir, output_video_path)
 
-mov2mov("SD記事用動画.mp4","article_sample.png","frames","SD2_with_Net.mp4")
+mov2mov("SD記事用動画.mp4","frames","SD2_with_Net.mp4")

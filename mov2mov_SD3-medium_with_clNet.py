@@ -40,7 +40,7 @@ def apply_img2img_with_reference(frame_path, edges_image, reference_image, pipel
         generated_image = pipeline(
             prompt="(Cinematic Aesthetic:1.4) Realistic photo, a cowboy, dance , moving, dynamic, man wearing a brown hat, Long Sleeve Clothes,4k",
             negative_prompt="cartoon, lowres, blurry, pixelated, sketch, drawing, NSFW, nude, naked, porn, ugly",
-            control_image = reference_image_resized,
+            control_image = edges_image,
             guidance_scale=15,
             #strength=0.6,
             controlnet_conditioning_scale=0.6,
