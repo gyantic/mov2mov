@@ -8,8 +8,6 @@ from transformers import CLIPTokenizer
 
 
 modelFile1 = "E:/stadifmodels/beautifulRealistic_v7.safetensors"
-modelFile2 = "E:/stadifmodels/rmadaMergeSD21768_v70.safetensors"
-modelFile3 = "E:/stadifmodels/realmixpony_rev04fix.safetensors"
 
 def load_controlnet_model(controlnet_model_name, device):
     controlnet = ControlNetModel.from_pretrained(
