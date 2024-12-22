@@ -12,7 +12,8 @@ https://pixabay.com/ja/videos/%E7%94%B7-%E3%82%AB%E3%82%A6%E3%83%9C%E3%83%BC%E3%
 
 ファイル名に使用したモデルを記載している。　例えばSD2.1_with_clNetなら、SD2.1についてControlNetを使用したmov2movを実行できるファイルである。
 
-## 実行環境について
+## 実行環境につい
+pythonのバージョンは3.12.4である。
 #### SD1.5, SD2.1の場合
 ControlNetの有無によらず、RTX4070(VRAM=12GB)でも十分動作したが、30~40分程度実行にかかった。
 
