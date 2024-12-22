@@ -3,6 +3,8 @@
 入力動画は以下のリンクのものを使用させていただいた。
 https://pixabay.com/ja/videos/%E7%94%B7-%E3%82%AB%E3%82%A6%E3%83%9C%E3%83%BC%E3%82%A4-%E8%A5%BF%E9%83%A8-%E5%B8%BD%E5%AD%90-208373/
 
+また、mov2movによって得られた動画についてはOutputVideosにまとめておいている。
+
 
 ## コードの内容
 使用したモデルはSD1.5, SD2, SD3-medium, SD3.5-large　である。
