@@ -58,7 +58,6 @@ def combine_frames_to_video(frames_dir, output_video_path, fps=30):
 
 def mov2mov(video_path, output_dir, output_video_path):
     split_video_to_frames(video_path, output_dir)
-    reference_image = Image.open(reference_image_path).convert("RGB")
 
     # ControlNetモデルのパス（カスタムモデル)
     controlnet_model_path = "thibaud/controlnet-sd21-canny-diffusers"

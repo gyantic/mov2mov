@@ -10,8 +10,14 @@ https://pixabay.com/ja/videos/%E7%94%B7-%E3%82%AB%E3%82%A6%E3%83%9C%E3%83%BC%E3%
 
 ファイル名に使用したモデルを記載している。　例えばSD2.1_with_clNetなら、SD2.1についてControlNetを使用したmov2movを実行できるファイルである。
 
+## 実行環境について
+#### SD1.5, SD2.1の場合
+ControlNetの有無によらず、RTX4070(VRAM=12GB)でも十分動作したが、30~40分程度実行にかかった。
 
-
+#### SD3, SD3.5の場合
+RTX4070ではメモリ不足(cuda out of memory)になった。
+A100(VRAM=40GB)を使えばSD3の場合とSD3.5のControlNetなしの場合では実行できた。(実行は20~30分程度)
+しかしA100を使ってもSD3.5-largeでControlNetを使用するとメモリ不足となった。
 
 ## 使用方法
 mov2mov関数を実行することでmov2movがなされるようになっている。
@@ -22,7 +28,7 @@ mov2mov関数の引数は、
 ```
 mov2mov("input.mp4, frames, "output.mp4")
 ```
-とすればいい。
+とすればいい。framesには適切なパスならそのファイルがなくても措定したディレクトリにファイルを作成してくれるようになっている。
 
 
 
